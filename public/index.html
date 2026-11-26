@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tomotoru Game Server</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 520px;
+        margin: 4rem auto;
+        padding: 0 1.25rem;
+        color: #1f2937;
+        background: #fafafa;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+      }
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        background: #dcfce7;
+        color: #166534;
+      }
+      .badge.err {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Tomotoru Game Server</h1>
+      <p>Status: <span id="status" class="badge">Checking...</span></p>
+    </div>
+    <script>
+      fetch("/health")
+        .then((r) => r.json())
+        .then((health) => {
+          const el = document.getElementById("status");
+          const ok = health.status === "healthy";
+          el.textContent = ok ? "Online" : "Unavailable";
+          if (!ok) el.classList.add("err");
+        })
+        .catch(() => {
+          const el = document.getElementById("status");
+          el.textContent = "Unavailable";
+          el.classList.add("err");
+        });
+    </script>
+  </body>
+</html>

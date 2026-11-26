@@ -1,0 +1,11 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+
+/
+  Content-Security-Policy: default-src 'none'; connect-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'
+
+/dl/*
+  Cache-Control: public, max-age=31536000, immutable, no-transform
+  X-Content-Type-Options: nosniff

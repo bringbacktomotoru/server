@@ -21,11 +21,11 @@ export async function makeFriendCode(uid) {
   return (top32 % 900_000_000) + 100_000_000;
 }
 
-export async function createDefaultUser(uid, { debug = false } = {}) {
+export async function createDefaultUser(uid, { debug = false, skipTutorials = false } = {}) {
   const now = gameServerTime();
   const startGmoney = debug ? 50000 : 5000;
   const startFreerm = debug ? 1000 : 100;
-  const endTutorialIds = debug ? [...ALL_TUTORIAL_IDS] : [];
+  const endTutorialIds = debug || skipTutorials ? [...ALL_TUTORIAL_IDS] : [];
   const friendCode = await makeFriendCode(uid);
 
   return {
@@ -65,7 +65,16 @@ export async function createDefaultUser(uid, { debug = false } = {}) {
     room_slots: [{ room_uid: 1, reside_charas: [109001] }],
     unlocked_slot_ids: [0],
     room_edits: [
-      { uid: 1, room_id: 1, layouts: [], panel_mission_id: 101, gmoney: startGmoney },
+      {
+        uid: 1,
+        room_id: 1,
+        layouts: [
+          [1, 0, 0, 0, 0],
+          [2, 4, 0, 0, 0],
+        ],
+        panel_mission_id: 101,
+        gmoney: startGmoney,
+      },
     ],
     room_layout: [],
     // Costume 109001 = Hello Kitty (chara_id = 1)
@@ -122,12 +131,40 @@ export async function createDefaultUser(uid, { debug = false } = {}) {
   };
 }
 
-export async function loadOrCreateUser(store, uid, { debug = false } = {}) {
+export async function loadOrCreateUser(
+  store,
+  uid,
+  { debug = false, skipTutorials = false } = {},
+) {
   let ud = await store.getPlayer(uid);
   if (!ud || ud.friend_code === undefined || Number(ud.version ?? 0) < 3) {
-    ud = await createDefaultUser(uid, { debug });
+    ud = await createDefaultUser(uid, { debug, skipTutorials });
     await store.savePlayer(uid, ud);
     return { ud, isNew: true };
+  }
+  if (skipTutorials) {
+    let migrated = false;
+    if (!Array.isArray(ud.end_tutorial_ids) || ud.end_tutorial_ids.length < ALL_TUTORIAL_IDS.length) {
+      ud.end_tutorial_ids = [...ALL_TUTORIAL_IDS];
+      migrated = true;
+    }
+    if (
+      Array.isArray(ud.room_edits) &&
+      ud.room_edits.length > 0 &&
+      Array.isArray(ud.room_edits[0].layouts) &&
+      ud.room_edits[0].layouts.length === 0 &&
+      Array.isArray(ud.furnitures) &&
+      ud.furnitures.length >= 2
+    ) {
+      ud.room_edits[0].layouts = [
+        [toInt(ud.furnitures[0].uid, 1), 0, 0, 0, 0],
+        [toInt(ud.furnitures[1].uid, 2), 4, 0, 0, 0],
+      ];
+      migrated = true;
+    }
+    if (migrated) {
+      await store.savePlayer(uid, ud);
+    }
   }
   return { ud, isNew: false };
 }

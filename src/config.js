@@ -28,6 +28,7 @@ export function loadConfig(env = {}) {
     hasValidSessionSecret: sessionSecret.length >= MIN_SESSION_SECRET_LENGTH,
     blowfishKey: String(env.BLOWFISH_KEY || "test"),
     debugMode: parseBool(env.DEBUG_MODE, false),
+    skipTutorials: parseBool(env.SKIP_TUTORIALS, false),
     allowPlaintextRequests: parseBool(env.ALLOW_PLAINTEXT_REQUESTS, false),
     maintenanceMode: parseIntSafe(env.MAINTENANCE_MODE, 0, 0, 10),
     debugFriendCode: String(env.DEBUG_FRIENDCODE || ""),

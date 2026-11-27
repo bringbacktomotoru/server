@@ -65,7 +65,14 @@ function consumeUserdataArray(datas) {
     get(); // uid
     get(); // room_id
     const flen = get();
-    expect(flen).toBe(0);
+    expect(flen).toBeGreaterThanOrEqual(0);
+    for (let j = 0; j < flen; j++) {
+      get(); // furniture uid
+      get(); // x
+      get(); // y
+      get(); // z
+      get(); // angle
+    }
     get(); // panel_mission_id
     get(); // gmoney
   }

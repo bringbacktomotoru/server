@@ -72,8 +72,12 @@ describe("BlowfishECB & SakanaGL wire protocol", () => {
 
     const pyScript = `
 import json, sys
-from tools.server.crypto import encrypt_payload, decrypt_payload
-from tools.server.persistence.user_data import _make_friend_code
+try:
+    from server.python.crypto import encrypt_payload, decrypt_payload
+    from server.python.persistence.user_data import _make_friend_code
+except ImportError:
+    from tools.server.crypto import encrypt_payload, decrypt_payload
+    from tools.server.persistence.user_data import _make_friend_code
 
 inp = json.loads(sys.argv[1])
 js_decoded_in_py = [decrypt_payload(e) for e in inp["js_encrypted"]]

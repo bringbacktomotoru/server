@@ -56,7 +56,10 @@ function generateTakeoverCode() {
 export function registerEntranceHandlers() {
   registerEntrance(ENTRANCE_CMD.AUTH, async ({ store, params, config }) => {
     const uid = sanitizeUuid(params.uuid);
-    const { ud, isNew } = await loadOrCreateUser(store, uid, { debug: config.debugMode });
+    const { ud, isNew } = await loadOrCreateUser(store, uid, {
+      debug: config.debugMode,
+      skipTutorials: config.skipTutorials,
+    });
     if (!isNew) {
       ud.last_login = gameServerTime();
       await store.savePlayer(uid, ud);

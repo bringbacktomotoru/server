@@ -13,8 +13,12 @@ import {
 import { makeFriendCode } from "../src/domain/userData.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const pythonBin = path.resolve(__dirname, "../../tomotoru/.venv/bin/python");
-const tomotoruRoot = path.resolve(__dirname, "../../tomotoru");
+const gameRoot = process.env.TOMOTORU_GAME_DIR
+  ? path.resolve(process.env.TOMOTORU_GAME_DIR)
+  : path.resolve(__dirname, "../../game");
+const pythonBin = path.join(gameRoot, ".venv", "bin", "python");
+const hasGameCodec = fs.existsSync(pythonBin) &&
+  fs.existsSync(path.join(gameRoot, "tests", "sakana_wire.py"));
 
 describe("BlowfishECB & SakanaGL wire protocol", () => {
   it("matches standard Blowfish ECB test vector", () => {
@@ -58,11 +62,11 @@ describe("BlowfishECB & SakanaGL wire protocol", () => {
     expect(() => decryptPayload(big, { maxDecompressedBytes: 1024 })).toThrow(/limit/i);
   });
 
-  it("is 100% cross-compatible bit-for-bit with Python tools/server/crypto.py", async () => {
-    if (!fs.existsSync(pythonBin)) {
-      return;
-    }
+  it("matches the game's nine-digit friend code", async () => {
+    expect(await makeFriendCode("player-cross-test-001")).toBe(137078568);
+  });
 
+  it.skipIf(!hasGameCodec)("is compatible with the game's Python test codec", () => {
     const cases = [
       [{ ret: 1, cmd: 0, msg: "hello world", jp: "ハローキティの部屋" }],
       [{ ret: 1, big: "SANRIO_".repeat(2000) }],
@@ -72,28 +76,21 @@ describe("BlowfishECB & SakanaGL wire protocol", () => {
 
     const pyScript = `
 import json, sys
-try:
-    from server.python.crypto import encrypt_payload, decrypt_payload
-    from server.python.persistence.user_data import _make_friend_code
-except ImportError:
-    from tools.server.crypto import encrypt_payload, decrypt_payload
-    from tools.server.persistence.user_data import _make_friend_code
+from tests.sakana_wire import encrypt_payload, decrypt_payload
 
 inp = json.loads(sys.argv[1])
 js_decoded_in_py = [decrypt_payload(e) for e in inp["js_encrypted"]]
 py_encrypted = [encrypt_payload(c) for c in inp["cases"]]
-friend_code = _make_friend_code("player-cross-test-001")
 print(json.dumps({
     "js_decoded_in_py": js_decoded_in_py,
     "py_encrypted": py_encrypted,
-    "friend_code": friend_code,
 }, ensure_ascii=False))
 `;
 
     const out = execFileSync(
       pythonBin,
       ["-c", pyScript, JSON.stringify({ cases, js_encrypted: jsEncrypted })],
-      { cwd: tomotoruRoot, encoding: "utf-8" },
+      { cwd: gameRoot, encoding: "utf-8" },
     );
     const res = JSON.parse(out);
 
@@ -101,6 +98,5 @@ print(json.dumps({
     for (let i = 0; i < cases.length; i++) {
       expect(decryptPayload(res.py_encrypted[i])).toEqual(cases[i]);
     }
-    expect(await makeFriendCode("player-cross-test-001")).toBe(res.friend_code);
   });
 });

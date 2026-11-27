@@ -1,5 +1,5 @@
 /**
- * Default SXR package manifest matching tomotoru/sxr/pkg.json (v1027).
+ * Default SXR package manifest matching the original APK's assets/sxr/pkg.json (v1027).
  * Can be overridden at runtime via the `server_config` store key `pkg_json`.
  */
 

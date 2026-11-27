@@ -14,6 +14,9 @@ Provides the backend endpoints required by the Tomotoru game client:
 
 ## Local Usage
 
+See the [game repository](https://github.com/bringbacktomotoru/game#3-run-tomoserver-locally)
+for instructions on preparing the SXR bundles and connecting an Android client.
+
 ```bash
 npm install
 npm run lint

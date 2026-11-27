@@ -13,12 +13,13 @@ import {
 import { makeFriendCode } from "../src/domain/userData.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const gameRoot = process.env.TOMOTORU_GAME_DIR
-  ? path.resolve(process.env.TOMOTORU_GAME_DIR)
-  : path.resolve(__dirname, "../../game");
-const pythonBin = path.join(gameRoot, ".venv", "bin", "python");
+const configuredToolsDir = process.env.TOMOTORU_TOOLS_DIR || process.env.TOMOTORU_GAME_DIR;
+const toolsRoot = configuredToolsDir
+  ? path.resolve(configuredToolsDir)
+  : path.resolve(__dirname, "../../tools");
+const pythonBin = path.join(toolsRoot, ".venv", "bin", "python");
 const hasGameCodec = fs.existsSync(pythonBin) &&
-  fs.existsSync(path.join(gameRoot, "tests", "sakana_wire.py"));
+  fs.existsSync(path.join(toolsRoot, "tests", "sakana_wire.py"));
 
 describe("BlowfishECB & SakanaGL wire protocol", () => {
   it("matches standard Blowfish ECB test vector", () => {
@@ -90,7 +91,7 @@ print(json.dumps({
     const out = execFileSync(
       pythonBin,
       ["-c", pyScript, JSON.stringify({ cases, js_encrypted: jsEncrypted })],
-      { cwd: gameRoot, encoding: "utf-8" },
+      { cwd: toolsRoot, encoding: "utf-8" },
     );
     const res = JSON.parse(out);
 

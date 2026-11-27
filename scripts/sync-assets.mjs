@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Copies SXR bundle files from ../game/.cache/sxr/ into ./public/dl/,
+ * Copies SXR bundle files from ../tools/.cache/sxr/ into ./public/dl/,
  * verifying file sizes and MD5 checksums against DEFAULT_PKG_MANIFEST.
  */
 
@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const srcDir = process.argv[2]
   ? path.resolve(process.argv[2])
-  : path.resolve(rootDir, "../game/.cache/sxr");
+  : path.resolve(rootDir, "../tools/.cache/sxr");
 const dstDir = path.join(rootDir, "public", "dl");
 
 if (!fs.existsSync(srcDir)) {

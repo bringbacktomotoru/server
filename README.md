@@ -24,8 +24,8 @@ The Node adapter defaults to `127.0.0.1:5000` when `HOST` and `PORT` are unset. 
 
 ### Connect the Android client
 
-1. Follow the [game build guide](https://github.com/bringbacktomotoru/game#quick-start) to extract the base APK's SXR bundles and build the `online-test` APK.
-2. From this checkout, run `node scripts/sync-assets.mjs ../game/.cache/sxr` (adjust the path if your game checkout has a different name). The bundles are served from `public/dl/` and are not part of this repository.
+1. Follow the [tools build guide](https://github.com/bringbacktomotoru/tools#quick-start) to extract the base APK's SXR bundles and build the `online-test` APK.
+2. From this checkout, run `node scripts/sync-assets.mjs ../tools/.cache/sxr` (adjust the path if your tools checkout has a different name). The bundles are served from `public/dl/` and are not part of this repository.
 3. With the server running on port `18880`, run `adb reverse tcp:18880 tcp:18880` and launch the `online-test` APK on the device connected through ADB.
 
 The default manifest matches the base APK's bundles. If you serve patched bundles, configure a matching manifest.
@@ -49,8 +49,12 @@ npm test
 
 For local HTTP checks and notes on the end-to-end smoke test, see the [wiki's verification guide](https://github.com/bringbacktomotoru/server/wiki/Local-Setup#verify-an-instance).
 
+To include the optional Python protocol comparison, install the dev dependencies in a sibling `tools` checkout. For a different checkout path, run `TOMOTORU_TOOLS_DIR=/path/to/tools npm test`.
+
 ## Project links
 
 - [Server wiki](https://github.com/bringbacktomotoru/server/wiki) — setup, configuration, and HTTP endpoints
-- [Game tooling](https://github.com/bringbacktomotoru/game) — reverse-engineering tools and Android APK builds
+- [Game](https://github.com/bringbacktomotoru/game) — preserved client sources and technical documentation
+- [Tools](https://github.com/bringbacktomotoru/tools) — reverse-engineering utilities and the APK builder
+- [Builds](https://github.com/bringbacktomotoru/builds/releases) — downloadable Android APKs
 - [Offline server](https://github.com/bringbacktomotoru/offline) — the Java backend embedded in offline APKs

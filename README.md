@@ -5,6 +5,10 @@
 
 Tomoserver is the JavaScript backend for **Tomotoru (Hello Kitty Happy Life)**. Run it locally to test the Android client, or host it separately for an online build. It implements the SakanaGL `app_kitty` protocol for sign-in, account transfers, gameplay, and telemetry, and serves package metadata and game bundle downloads.
 
+The **official Online APK** from [Tomotoru Builds](https://github.com/bringbacktomotoru/builds/releases) connects over the Internet to the server run by this project's maintainer. The server must be available to play, and it stores your progress. For your own server, build a custom APK that points to it, or use `online-test` for local testing.
+
+The **Offline APK** has its own server built into the app. It needs no Internet or separate server and saves progress on your device. The [v0.0.1 archive](https://github.com/bringbacktomotoru/builds/releases/tag/v0.0.1) contains the unmodified original APK, which is neither revival edition.
+
 ## Quick start
 
 Use **Node.js 22.13+** (CI runs on Node.js 22). From this checkout:

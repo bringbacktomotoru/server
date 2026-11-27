@@ -47,7 +47,7 @@ npm run lint
 npm test
 ```
 
-With the server running and SXR bundles in place, `node scripts/verify-live.mjs http://127.0.0.1:18880` checks the default manifest, a bundle download, and game flows with a test account.
+For local HTTP checks and notes on the end-to-end smoke test, see the [wiki's verification guide](https://github.com/bringbacktomotoru/server/wiki/Local-Setup#verify-an-instance).
 
 ## Project links
 
